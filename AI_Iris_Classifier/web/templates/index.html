@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Iris Flower Classification System</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌸 AI Iris Flower Classification System</h1>
+      <p class="subtitle">Enter flower measurements to predict the Iris species</p>
+    </header>
+
+    {% if not model_ready %}
+      <div class="alert alert-warning">
+        No trained model found. Please run <code>python main.py</code> in the project root,
+        then restart this app.
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <div class="content">
+      <div class="card">
+        <h2>Flower Measurements</h2>
+        <form method="POST" action="/predict">
+          <div class="form-group">
+            <label for="sepal_length">Sepal Length (cm)</label>
+            <input type="number" step="0.1" min="0" max="15" name="sepal_length" id="sepal_length"
+                   value="{{ form_values.sepal_length if form_values else '5.1' }}" required>
+          </div>
+          <div class="form-group">
+            <label for="sepal_width">Sepal Width (cm)</label>
+            <input type="number" step="0.1" min="0" max="15" name="sepal_width" id="sepal_width"
+                   value="{{ form_values.sepal_width if form_values else '3.5' }}" required>
+          </div>
+          <div class="form-group">
+            <label for="petal_length">Petal Length (cm)</label>
+            <input type="number" step="0.1" min="0" max="15" name="petal_length" id="petal_length"
+                   value="{{ form_values.petal_length if form_values else '1.4' }}" required>
+          </div>
+          <div class="form-group">
+            <label for="petal_width">Petal Width (cm)</label>
+            <input type="number" step="0.1" min="0" max="15" name="petal_width" id="petal_width"
+                   value="{{ form_values.petal_width if form_values else '0.2' }}" required>
+          </div>
+          <button type="submit" {% if not model_ready %}disabled{% endif %}>Predict Species</button>
+        </form>
+      </div>
+
+      <div class="card result-card">
+        <h2>Prediction Result</h2>
+        {% if result %}
+          <div class="species-result species-{{ result.predicted_species }}">
+            <span class="label">Predicted Species</span>
+            <span class="value">{{ result.predicted_species|capitalize }}</span>
+          </div>
+
+          {% if result.probabilities %}
+          <h3>Class Probabilities</h3>
+          <div class="probabilities">
+            {% for species, prob in result.probabilities.items() %}
+            {% set species_class = 'species-' ~ species|replace(' ', '-')|lower ~ '-bg' %}
+            <div class="prob-row">
+              <span class="prob-label">{{ species|capitalize }}</span>
+              <div class="prob-bar-bg">
+                <divclass="prob-bar-fill {{ species_class }}" style="width: {{ (prob * 100) | round(1) }}%;"></div>
+              </div>
+              <span class="prob-value">{{ "%.2f"|format(prob * 100) }}%</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <h3>Input Used</h3>
+          <ul class="input-list">
+            <li>Sepal Length: {{ result.input[0] }} cm</li>
+            <li>Sepal Width: {{ result.input[1] }} cm</li>
+            <li>Petal Length: {{ result.input[2] }} cm</li>
+            <li>Petal Width: {{ result.input[3] }} cm</li>
+          </ul>
+        {% else %}
+          <p class="placeholder">Submit the form to see a prediction here.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <footer>
+      <p>Powered by scikit-learn &middot; Model trained via <code>main.py</code> &middot;
+         <a href="/api/predict" onclick="return false;" title="POST JSON here">JSON API available at /api/predict</a></p>
+    </footer>
+  </div>
+</body>
+</html>

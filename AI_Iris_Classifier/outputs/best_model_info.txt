@@ -1,0 +1,29 @@
+AI IRIS FLOWER CLASSIFICATION - BEST MODEL REPORT
+=======================================================
+
+Best Model       : Support Vector Machine
+Accuracy         : 0.9667
+Precision (macro): 0.9697
+Recall (macro)   : 0.9667
+F1 Score (macro) : 0.9666
+
+Full Comparison Table:
+                 Model  Accuracy  Precision  Recall  F1 Score
+Support Vector Machine    0.9667     0.9697  0.9667    0.9666
+                   KNN    0.9333     0.9444  0.9333    0.9327
+         Decision Tree    0.9333     0.9333  0.9333    0.9333
+   Logistic Regression    0.9333     0.9333  0.9333    0.9333
+         Random Forest    0.9000     0.9024  0.9000    0.8997
+
+Detailed Classification Report:
+              precision    recall  f1-score   support
+
+      setosa       1.00      1.00      1.00        10
+  versicolor       1.00      0.90      0.95        10
+   virginica       0.91      1.00      0.95        10
+
+    accuracy                           0.97        30
+   macro avg       0.97      0.97      0.97        30
+weighted avg       0.97      0.97      0.97        30
+
+Feature importance chart generated: False
